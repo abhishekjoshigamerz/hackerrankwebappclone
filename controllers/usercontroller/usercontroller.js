@@ -10,19 +10,22 @@ module.exports.login = function(req, res){
 
 module.exports.register = async function(req, res){
     try {
+        console.log("data inside");
         const errors = validationResult(req);
-        req.flash('error','');
+        
         if(!errors.isEmpty()){
             let message = [];
-
-            for(let i=0;i<errors.array().length;i++){
-                message.push(errors.array()[i].msg);
+            let result  = errors.array();
+            for(let i=0;i<result.length;i++){
+                message.push(result[i].msg);
             }
+            console.log('Errors');
+            console.log(message);
             req.flash('error',message);
             return res.redirect('back');
           
         }
-
+    
         //now create users 
         let salt = await bcrypt.genSalt(10);
         let password = await bcrypt.hash(req.body.password,salt);
@@ -30,9 +33,12 @@ module.exports.register = async function(req, res){
             email:req.body.email,
             password:password,
         });
-        req.flash('success','Account created successfully,now Log in');
-        return res.redirect('/auth/login');
+        if(user){
+            req.flash('success','Account created successfully,now Log in');
+            return res.redirect('/auth/login');
 
+        }
+        
     } catch (error) {
         console.log(error);
         req.flash('error','Something went wrong');
