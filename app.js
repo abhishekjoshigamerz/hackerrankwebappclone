@@ -1,6 +1,8 @@
 const axios = require('axios');
 const express = require('express');
 const mongoose = require('mongoose');
+const passport = require('passport');
+const passportLocal = require('./config/passport-config');
 const db = require('./config/database');
 const session = require('express-session');
 const expressLayouts = require('express-ejs-layouts');
@@ -13,6 +15,8 @@ dotenv.config();
 
 
 app.use(express.urlencoded());
+
+passportLocal(passport);
 
 app.use(expressLayouts);
 app.use(express.static('./assets/'));
